@@ -1,6 +1,8 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from openai import OpenAI
+from .chatgpt_client import ChatGPTClient
 
 from .speech_to_text import SpeechToText
 
@@ -15,6 +17,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- OpenAI client --- 
+# Automatically reads OPENAI_API_KEY from environment
+client = ChatGPTClient()
 
 # --- Models ---
 class SummaryRequest(BaseModel):
@@ -68,7 +73,7 @@ async def voice_turn(audio: UploadFile = File(...)):
     original_sentence = text
     corrected_sentence = ""
     explanation = ""
-    reply = ""
+    reply = client.ask(text)
 
     return {
         "original_sentence": original_sentence,
