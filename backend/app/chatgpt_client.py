@@ -20,6 +20,6 @@ def ask_chatgpt(prompt: str) -> str:
 
 if __name__ == "__main__":
     # Simple manual test
-    text = input("You: ")
+    text = "Hello, whats se result to add 1 and 2?"
     reply = ask_chatgpt(text)
     print("Assistant:", reply)
