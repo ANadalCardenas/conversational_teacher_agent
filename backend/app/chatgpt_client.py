@@ -15,3 +15,11 @@ def ask_chatgpt(prompt: str) -> str:
     )
 
     return response.choices[0].message.content
+
+
+
+if __name__ == "__main__":
+    # Simple manual test
+    text = input("You: ")
+    reply = ask_chatgpt(text)
+    print("Assistant:", reply)
