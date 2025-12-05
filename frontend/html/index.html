@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>English Conversational Teacher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>English Conversational Teacher</h1>
+    </header>
+
+    <div id="status" class="status"></div>
+
+    <!-- STEP 1: Landing / Recording -->
+    <section id="step1" class="step active">
+      <div class="agent-text">
+        <p id="agent-message">Hello, I am your personal English teacher.</p>
+      </div>
+
+      <div class="recording-section">
+        <p class="hint">Press and hold the button to speak. Release to stop.</p>
+        <button id="record-btn" class="record-btn">
+          Click &amp; hold to talk
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 2: Correction view -->
+    <section id="step2" class="step">
+      <h2>Feedback</h2>
+      <div class="feedback-block">
+        <h3>Your sentence</h3>
+        <p id="original-sentence" class="feedback-text"></p>
+      </div>
+
+      <div class="feedback-block">
+        <h3>Correction</h3>
+        <p id="corrected-sentence" class="feedback-text"></p>
+      </div>
+
+      <div class="feedback-block">
+        <h3>Explanation</h3>
+        <p id="explanation-text" class="feedback-text"></p>
+      </div>
+
+      <div class="actions-row">
+        <button id="continue-btn" class="primary-btn">Continue</button>
+        <button id="finish-btn" class="secondary-btn">Finish &amp; summarise</button>
+      </div>
+    </section>
+
+    <!-- STEP 3: Summary -->
+    <section id="step3" class="step">
+      <h2>Session Summary</h2>
+
+      <div class="summary-section">
+        <h3>Main mistakes</h3>
+        <ul id="summary-mistakes"></ul>
+      </div>
+
+      <div class="summary-section">
+        <h3>Suggested activities</h3>
+        <ul id="summary-activities"></ul>
+      </div>
+
+      <div class="actions-row">
+        <button id="new-session-btn" class="primary-btn">
+          Start a new session
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

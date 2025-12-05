@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: teacher-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"   # optional, useful for debugging
+    networks:
+      - teacher-net
+    gpus: all
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: teacher-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"       # Launch app via http://localhost in your host browser
+    depends_on:
+      - backend
+    networks:
+      - teacher-net
+
+networks:
+  teacher-net:
+    driver: bridge
