@@ -6,3 +6,4 @@ openai-whisper==20240930
 torch
 torchaudio
 numpy
+openai>=1.0.0
