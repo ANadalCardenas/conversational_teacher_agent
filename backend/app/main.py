@@ -70,17 +70,33 @@ async def voice_turn(audio: UploadFile = File(...)):
     # TODO: Call your conversational teacher agent here!
     ####################################################
     ####################################################
-    original_sentence = text
-    corrected_sentence = ""
-    explanation = ""
-    reply = client.ask(text)
 
+    analysis = client.analyze_sentence(text)
+
+    # Safety guard: if something went wrong and analysis is not a dict
+    if not isinstance(analysis, dict):
+        analysis = {
+            "corrected_sentence": "",
+            "explanation": "Unexpected response format from language model.",
+            "examples": [],
+            "reply": str(analysis),
+        }
+
+    original_sentence = text
+    corrected_sentence = analysis.get("corrected_sentence", "")
+    explanation = analysis.get("explanation", "")
+    examples = analysis.get("examples", [])
+    reply = analysis.get("reply", "")
+
+    # 5) Return everything to the frontend
     return {
         "original_sentence": original_sentence,
         "corrected_sentence": corrected_sentence,
         "explanation": explanation,
+        "examples": examples,
         "reply": reply,
     }
+
 
 
 @app.post("/api/summary", response_model=SummaryResponse)
