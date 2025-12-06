@@ -8,9 +8,9 @@ class ChatGPTClient:
 
     def analyze_sentence(self, sentence: str) -> dict:
         prompt = f"""
-You are an English teacher. Your task is to analyze a student's sentence and respond ONLY with a JSON object.
-
-STUDENT SENTENCE:
+You are an English conversational teacher. Your task is to evaluate the learner’s latest sentence, correct it, provide an explanation about the mistakes and then continue the conversation with a natural follow-up response. Respond ONLY with a JSON object.
+If the sentence has no mistakes, in the corrected_sentence field should appear the message 'Perfect Grammar!Congratulations!'.
+If there are any mistakes in the sentence, please add next to the mistakes explanation three examples of the corrected expression or word, separated by a new line, in the explanation field.
 "{sentence}"
 
 REQUIRED JSON FORMAT (use exactly these keys):
@@ -18,7 +18,6 @@ REQUIRED JSON FORMAT (use exactly these keys):
 {{
   "corrected_sentence": "...",
   "explanation": "...",
-  "examples": ["...", "...", "..."],
   "reply": "..."
 }}
 
@@ -48,10 +47,3 @@ RULES:
                 "examples": [],
                 "reply": content,
             }
-"""
-if __name__ == "__main__":
-    # Simple manual test
-    text = "Hello, whats se result to add 1 and 2?"
-    reply = ask_chatgpt(text)
-    print("Assistant:", reply)
-    """
