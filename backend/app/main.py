@@ -1,7 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from openai import OpenAI
 from .chatgpt_client import ChatGPTClient
 
 from .speech_to_text import SpeechToText
@@ -67,42 +66,26 @@ async def voice_turn(audio: UploadFile = File(...)):
     # Transcribe audio
     text = stt.transcribe_bytes(content, file_extension=ext)
 
-    # TODO: Call your conversational teacher agent here!
-    ####################################################
-    ####################################################
-
     analysis = client.analyze_sentence(text)
 
     # Safety guard: if something went wrong and analysis is not a dict
     if not isinstance(analysis, dict):
-        return {
-            "original_sentence": text,
+        analysis = {
             "corrected_sentence": "",
-            "explanation": {"details": "Invalid response"},
-            "reply": ""
+            "explanation": "Unexpected response format from language model.",
+            "reply": str(analysis),
         }
 
-    corrected_sentence = analysis.get("correct_sentence", analysis.get("corrected_sentence", ""))
-    # Explanation
-    exp = analysis.get("explanation", {})
-    if isinstance(exp, dict):
-        details = exp.get("details", "")
-        examples = exp.get("examples", [])
-        native = exp.get("native", "")
-
-        examples_text = "\n".join(examples)
-        explanation = f"{details}\n\nExamples:\n{examples_text}\n\nNative:\n{native}"
-    else:
-        explanation = str(exp)
-
-    # Ends explataion section
-
+    original_sentence = text
+    corrected_sentence = analysis.get("corrected_sentence", "")
+    explanation = analysis.get("explanation", "")
     reply = analysis.get("reply", "")
 
+    # 5) Return everything to the frontend
     return {
-        "original_sentence": text,
+        "original_sentence": original_sentence,
         "corrected_sentence": corrected_sentence,
-        "explanation": explanation,  # send whole dict to frontend
+        "explanation": explanation,
         "reply": reply,
     }
 
@@ -118,7 +101,7 @@ async def summary(_: SummaryRequest):
     # TODO: Call your summary agent here!
     ####################################################
     ####################################################
-    summary = client.get_summary()
+    summary = client.get_summary(full_conversation)
 
     mistakes = summary.get("summary_mistakes", [])
     activities = summary.get("summary_activities", "")
