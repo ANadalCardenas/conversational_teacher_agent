@@ -75,25 +75,34 @@ async def voice_turn(audio: UploadFile = File(...)):
 
     # Safety guard: if something went wrong and analysis is not a dict
     if not isinstance(analysis, dict):
-        analysis = {
+        return {
+            "original_sentence": text,
             "corrected_sentence": "",
-            "explanation": "Unexpected response format from language model.",
-            "examples": [],
-            "reply": str(analysis),
+            "explanation": {"details": "Invalid response"},
+            "reply": ""
         }
 
-    original_sentence = text
-    corrected_sentence = analysis.get("corrected_sentence", "")
-    explanation = analysis.get("explanation", "")
-    examples = analysis.get("examples", [])
+    corrected_sentence = analysis.get("correct_sentence", analysis.get("corrected_sentence", ""))
+    # Explanation
+    exp = analysis.get("explanation", {})
+    if isinstance(exp, dict):
+        details = exp.get("details", "")
+        examples = exp.get("examples", [])
+        native = exp.get("native", "")
+
+        examples_text = "\n".join(examples)
+        explanation = f"{details}\n\nExamples:\n{examples_text}\n\nNative:\n{native}"
+    else:
+        explanation = str(exp)
+
+    # Ends explataion section
+
     reply = analysis.get("reply", "")
 
-    # 5) Return everything to the frontend
     return {
-        "original_sentence": original_sentence,
+        "original_sentence": text,
         "corrected_sentence": corrected_sentence,
-        "explanation": explanation,
-        "examples": examples,
+        "explanation": explanation,  # send whole dict to frontend
         "reply": reply,
     }
 
@@ -109,11 +118,12 @@ async def summary(_: SummaryRequest):
     # TODO: Call your summary agent here!
     ####################################################
     ####################################################
+    summary = client.get_summary()
+
+    mistakes = summary.get("summary_mistakes", [])
+    activities = summary.get("summary_activities", "")
+
     return SummaryResponse(
-        main_mistakes=[
-            "",
-        ],
-        activities=[
-            "",
-        ],
+        main_mistakes=mistakes,
+        activities=activities
     )

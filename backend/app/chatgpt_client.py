@@ -1,49 +1,139 @@
 from openai import OpenAI
 import json
 
+
 class ChatGPTClient:
     def __init__(self, model: str = "gpt-4.1-mini"):
         self.client = OpenAI()
         self.model = model
 
-    def analyze_sentence(self, sentence: str) -> dict:
-        prompt = f"""
-You are an English conversational teacher. Your task is to evaluate the learner’s latest sentence, correct it, provide an explanation about the mistakes and then continue the conversation with a natural follow-up response. Respond ONLY with a JSON object.
-If the sentence has no mistakes, in the corrected_sentence field should appear the message 'Perfect Grammar!Congratulations!'.
-If there are any mistakes in the sentence, please add next to the mistakes explanation three examples of the corrected expression or word, separated by a new line, in the explanation field.
-"{sentence}"
+        # Store only the conversational "reply" and the raw user sentence,
+        # NOT the JSON results.
+        self.user_messages = []
+        self.assistant_replies = []
 
-REQUIRED JSON FORMAT (use exactly these keys):
+    def _format_instruction_prompt(self):
+        return """
+You are an English conversational teacher.
 
-{{
-  "corrected_sentence": "...",
-  "explanation": "...",
+When the user gives a sentence, RETURN STRICT JSON ONLY:
+
+{
+  "correct_sentence": "...",
+  "explanation": {
+        "details": "...",
+        "examples": [
+            "<span style='color:green; font-weight:bold'>example 1</span>",
+            "<span style='color:green; font-weight:bold'>example 2</span>",
+            "<span style='color:green; font-weight:bold'>example 3</span>"
+        ],
+        "native": "*A natural native expression related to the text*"
+  },
   "reply": "..."
-}}
+}
 
 RULES:
-- Your entire response MUST be valid JSON.
-- Do NOT include any text outside the JSON.
-- Do NOT add comments or explanations outside the JSON.
-- If the sentence has no mistakes, correct it only lightly and still fill the fields.
-
+- Highlight incorrect parts using <span style='color:red; font-weight:bold'>...</span>.
+- If the sentence is already correct:
+    * correct_sentence MUST equal the original sentence.
+    * explanation.details MUST be "Perfect Grammar".
+    * explanation.examples MUST be empty.
+    * explanation.native MUST still contain a native-like expression.
+- reply MUST end with a question.
+- OUTPUT MUST BE VALID JSON. DO NOT add anything outside the JSON.
 """
+
+    def analyze_sentence(self, sentence: str) -> dict:
+
+        # Save user sentence in memory
+        self.user_messages.append(sentence)
+
+        # Build conversation context (NOT raw JSON!)
+        conversation_text = ""
+
+        for u, a in zip(self.user_messages, self.assistant_replies):
+            conversation_text += f"User: {u}\nAssistant: {a}\n"
+
+        # Add last sentence as the new user message
+        conversation_text += f"User: {sentence}\n"
+
+        messages = [
+            {"role": "system", "content": "You are an English conversational teacher."},
+            {"role": "system", "content": self._format_instruction_prompt()},
+            {"role": "user", "content": conversation_text}
+        ]
+
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {"role": "system", "content": "You are a strict language-teaching assistant."},
-                {"role": "user", "content": prompt},
-            ],
+            messages=messages,
+            temperature=0  # ensures stable JSON
+        )
+
+        content = response.choices[0].message.content
+
+        # JSON decode
+        try:
+            parsed = json.loads(content)
+        except json.JSONDecodeError:
+            return {
+                "correct_sentence": "",
+                "explanation": {
+                    "details": "JSON parsing error",
+                    "examples": [],
+                    "native": ""
+                },
+                "reply": ""
+            }
+
+        # Save clean assistant conversational reply
+        follow_up = parsed.get("reply", "")
+
+        # Sanitize just in case
+        follow_up = follow_up.replace("{", "").replace("}", "").replace('"', "'").strip()
+
+        self.assistant_replies.append(follow_up)
+
+        return parsed
+
+    def get_summary(self) -> dict:
+
+        # Build plain conversation (not JSON)
+        conversation_text = ""
+        for u, a in zip(self.user_messages, self.assistant_replies):
+            conversation_text += f"User: {u}\nAssistant: {a}\n"
+
+        summary_prompt = """
+Analyze all user messages above. RETURN STRICT JSON:
+
+{
+  "summary_mistakes": [
+     "mistake type 1",
+     "mistake type 2"
+  ],
+  "summary_activities": "Suggestions to fix these mistakes."
+}
+
+Only list mistake TYPES, not full corrections.
+"""
+
+        messages = [
+            {"role": "system", "content": "You are an English conversational teacher."},
+            {"role": "system", "content": summary_prompt},
+            {"role": "user", "content": conversation_text},
+        ]
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=0
         )
 
         content = response.choices[0].message.content
 
         try:
             return json.loads(content)
-        except Exception:
+        except:
             return {
-                "corrected_sentence": "",
-                "explanation": "Parsing error.",
-                "examples": [],
-                "reply": content,
+                "summary_mistakes": ["JSON parsing error"],
+                "summary_activities": ""
             }
