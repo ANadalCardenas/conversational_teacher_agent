@@ -3,7 +3,7 @@ import json
 
 
 class ChatGPTClient:
-    def __init__(self, model: str = "gpt-4.1-mini"):
+    def __init__(self, model: str = "gpt-4.1"):
         self.client = OpenAI()
         self.model = model
 
