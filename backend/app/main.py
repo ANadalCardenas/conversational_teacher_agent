@@ -66,6 +66,7 @@ async def voice_turn(audio: UploadFile = File(...)):
     # Transcribe audio
     text = stt.transcribe_bytes(content, file_extension=ext)
 
+    # Agent analysis
     analysis = client.analyze_sentence(text)
 
     # Safety guard: if something went wrong and analysis is not a dict
@@ -81,7 +82,7 @@ async def voice_turn(audio: UploadFile = File(...)):
     explanation = analysis.get("explanation", "")
     reply = analysis.get("reply", "")
 
-    # 5) Return everything to the frontend
+    # Return everything to the frontend
     return {
         "original_sentence": original_sentence,
         "corrected_sentence": corrected_sentence,
