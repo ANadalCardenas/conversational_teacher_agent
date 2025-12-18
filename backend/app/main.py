@@ -5,6 +5,7 @@ from .chatgpt_client import ChatGPTClient
 
 from .speech_to_text import SpeechToText
 
+summary_mistakes =[]
 # --- FastAPI app ---
 app = FastAPI(title="Conversational Teacher Backend")
 
@@ -68,6 +69,7 @@ async def voice_turn(audio: UploadFile = File(...)):
 
     # Agent analysis
     analysis = client.analyze_sentence(text)
+    summary_mistakes.append(analysis.get("explanation", ""))
 
     # Safety guard: if something went wrong and analysis is not a dict
     if not isinstance(analysis, dict):
@@ -99,13 +101,11 @@ async def summary(_: SummaryRequest):
       - main mistakes
       - proposed activities for improvement
     """
-    # TODO: Call your summary agent here!
-    ####################################################
-    ####################################################
-    summary = client.get_summary(full_conversation)
+    
+    summary = client.get_summary(summary_mistakes)
 
-    mistakes = summary.get("summary_mistakes", [])
-    activities = summary.get("summary_activities", "")
+    mistakes = summary.get("summary", [])
+    activities = summary.get("summary", "")
 
     return SummaryResponse(
         main_mistakes=mistakes,

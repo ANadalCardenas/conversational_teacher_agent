@@ -77,4 +77,80 @@ Analyze the sentence and respond following ALL the rules given in the system pro
                 "explanation": "Parsing error.",
                 "reply": content,
             }
-
+    def get_summary(self, summary_mistakes: list) -> dict:
+        prompt_system_summary = f"""You are an English conversation teacher for non-native students.
+    
+    Your job is to analyze a list of explanations extracted from previous corrections and identify the student's COMMON and RECURRING mistakes.
+    
+    You must respond in ONLY valid JSON.
+    
+    You must ALWAYS return a JSON object with EXACTLY this format:
+    {{
+    - "summary": "...",
+    }}
+    
+    IMPORTANT LOGIC RULES (MANDATORY):
+    
+    1) Input description:
+       - You will receive a list of text blocks.
+       - Each text block corresponds to an "explanation" field from a previous correction.
+       - You must analyze ALL of them together.
+    
+    2) Summary requirements:
+       - The summary MUST describe only COMMON or RECURRING mistakes.
+       - Do NOT list one-off or isolated errors.
+       - Group mistakes by category (e.g., verb tense, prepositions, word order, articles, unnatural phrasing, etc.).
+       - Use CLEAR, concise explanations written for a language learner.
+    
+    3) Formatting rules:
+       - The summary text MUST be plain text (black only, no colors).
+       - You MAY use <b> tags to structure sections and highlight categories.
+       - You MAY use <ul> and <li> for readability.
+       - Do NOT include examples unless they help clarify a recurring mistake.
+       - Do NOT repeat the original sentences.
+    
+    4) Content rules:
+       - Focus on patterns (e.g., “The student often forgets…”, “There is a recurring issue with…”).
+       - Provide short learning advice for each mistake category.
+       - Do NOT correct new sentences.
+       - Do NOT introduce new grammar topics not present in the input.
+    
+    5) Strict rules:
+       - Do not add extra fields.
+       - Do not add text outside the JSON object.
+       - If no clear recurring mistakes exist, state that the student shows good overall control with only minor, inconsistent errors.
+    
+    6) Verification:
+       - Before responding, verify:
+         * Output is valid JSON.
+         * Only one field named "summary" exists.
+         * All rules above are satisfied.
+       - If any rule is violated, regenerate the response silently.
+    """
+        
+        prompt_user_summary = f"""
+    Below is a list of explanation texts collected from previous corrections during a conversation.
+    
+    Analyze them and provide a summary of the COMMON mistakes made by the student.
+    
+    Explanations:
+    {summary_mistakes}
+    """
+        response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": prompt_system_summary},
+                    {"role": "user", "content": prompt_user_summary},
+                ],
+            )
+        
+        content = response.choices[0].message.content
+    
+        try:
+            json_content = json.loads(content)
+            print(json_content)
+            return json_content
+        except Exception:
+            return {
+                "summary": "",
+            }
