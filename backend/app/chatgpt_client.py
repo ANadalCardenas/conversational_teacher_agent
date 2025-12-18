@@ -18,20 +18,20 @@ You must ALWAYS return a JSON object with EXACTLY format:
 - "reply": "...",
 }}
 
-IMPORTANT LOGIC RULES:
+IMPORTANT LOGIC RULES(MANDATORY):
 
 1) If the student's sentence contains one or more mistakes:   
    - corrected_sentence:
-     * MUST provide the original sentence, highlight ONLY the incorrect word or expression in RED and BOLD using:
+     * MUST provide the WHOLE original sentence, highlight ONLY the incorrect word or expression in RED and BOLD using:
       <b style=\"color:red\">incorrect part</b> and provide the corrected sentence. 
-     * MUST show only onces both sentences (original and corrected).
+     * MUST show only onces both sentences (original and corrected) in two different paragraphs separated by a new line.
      * The corrected words/expressions MUST appear in GREEN and BOLD using: <b style=\"color:green\">corrected part</b>
    - explanation:
      * MUST show the text only in black, with no color.
      * MUST show some chunks of the text in BOLD format to structure the information better.
      * MUST explain each mistake clearly.
      * MUST give two example sentences for EACH correction.
-     * MUST provide an alternative, more natural way of saying the whole sentence that the user said.
+     * MUST provide an alternative, more natural way of saying the whole sentence that the user said. The whole sentence is mandatory
 
 2) If the student's sentence is already grammatically correct:
    - corrected_sentence MUST be exactly:
@@ -40,10 +40,15 @@ IMPORTANT LOGIC RULES:
     * MUST NOT explain mistakes.
     * MUST ONLY provide one more native, natural way to say the sentence.
 3) The reply must relate to the original sentence, be spoken as a native speaker would, and conclude with a follow-up question.  
-Do not add extra fields.
-Do not be nitpicky, just correct the most important mistakes.
-Do not add text outside the JSON object.
-HTML tags such as <ul>, <li>, <b>, and <br> are allowed inside the Explanation field.
+4) Do not add extra fields.
+5) Do not be nitpicky, just correct the most important mistakes.
+6) Do not add text outside the JSON object.
+7) HTML tags such as <ul>, <li>, <b>, and <br> are allowed inside the Explanation field.
+8) Before responding, verify:
+ - All mandatory rules are satisfied.
+ - The output format is correct.
+ - If any rule is violated, regenerate the response silently.
+9)If you understand these instructions, please respond with a brief introduction about yourself and a follow-up question to start the conversation.
 """
         prompt_user = f"""
 A student says the following sentence:
