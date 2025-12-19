@@ -55,6 +55,7 @@ async def voice_turn(audio: UploadFile = File(...)):
       - corrected_sentence
       - explanation
       - reply
+      - prompt_error
     """
 
     # Read raw bytes
@@ -83,6 +84,7 @@ async def voice_turn(audio: UploadFile = File(...)):
     corrected_sentence = analysis.get("corrected_sentence", "")
     explanation = analysis.get("explanation", "")
     reply = analysis.get("reply", "")
+    error_prompt = analysis.get("error_prompt", "")
 
     # Return everything to the frontend
     return {
@@ -90,6 +92,7 @@ async def voice_turn(audio: UploadFile = File(...)):
         "corrected_sentence": corrected_sentence,
         "explanation": explanation,
         "reply": reply,
+        "error_prompt": error_prompt,
     }
 
 

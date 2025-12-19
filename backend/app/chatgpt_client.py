@@ -17,6 +17,7 @@ You must ALWAYS return a JSON object with EXACTLY format:
 - "corrected_sentence": "...",
 - "explanation": "...",
 - "reply": "...",
+- "error_prompt": "...",
 }}
 
 IMPORTANT LOGIC RULES(MANDATORY):
@@ -49,7 +50,9 @@ IMPORTANT LOGIC RULES(MANDATORY):
  - All mandatory rules are satisfied.
  - The output format is correct.
  - If any rule is violated, regenerate the response silently.
-9)If you understand these instructions, please respond with a brief introduction about yourself and a follow-up question to start the conversation.
+9) If you understand these instructions, please respond with a brief introduction about yourself and a follow-up question to start the conversation.
+10) If you have any problem to process the request, return a JSON with an appropriate message in the "error_prompt" field and empty strings for the other fields.
+11) If the are no errors, the "error_prompt" field MUST be an empty string.
 """
         prompt_user = f"""
 A student says the following sentence:
@@ -78,6 +81,7 @@ Analyze the sentence and respond following ALL the rules given in the system pro
                 "corrected_sentence": "",
                 "explanation": "Parsing error.",
                 "reply": content,
+                "error_prompt": "",
             }
     def get_summary(self, summary_mistakes: list) -> dict:
         prompt_system_summary = f"""You are an English conversation teacher for non-native students.
