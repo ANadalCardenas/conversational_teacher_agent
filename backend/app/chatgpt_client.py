@@ -13,6 +13,7 @@ Your job is to analyze the student's sentence and respond in ONLY valid JSON.
 
 You must ALWAYS return a JSON object with EXACTLY format:
 {{
+- "original_sentence": "...",
 - "corrected_sentence": "...",
 - "explanation": "...",
 - "reply": "...",
@@ -20,12 +21,12 @@ You must ALWAYS return a JSON object with EXACTLY format:
 
 IMPORTANT LOGIC RULES(MANDATORY):
 
-1) If the student's sentence contains one or more mistakes:   
-   - corrected_sentence:
+1) If the student's sentence contains one or more mistakes:
+   - original_sentence:
      * MUST provide the WHOLE original sentence, highlight ONLY the incorrect word or expression in RED and BOLD using:
       <b style=\"color:red\">incorrect part</b> and provide the corrected sentence. 
-     * MUST show only onces both sentences (original and corrected) in two different paragraphs separated by a new line.
-     * The corrected words/expressions MUST appear in GREEN and BOLD using: <b style=\"color:green\">corrected part</b>
+   - corrected_sentence:
+     * MUST provide the WHOLE corrected sentence.The corrected words/expressions MUST appear in GREEN and BOLD using: <b style=\"color:green\">corrected part</b>
    - explanation:
      * MUST show the text only in black, with no color.
      * MUST show some chunks of the text in BOLD format to structure the information better.
@@ -73,6 +74,7 @@ Analyze the sentence and respond following ALL the rules given in the system pro
             return json_content
         except Exception:
             return {
+                "original_sentence": "",
                 "corrected_sentence": "",
                 "explanation": "Parsing error.",
                 "reply": content,

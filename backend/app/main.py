@@ -79,7 +79,7 @@ async def voice_turn(audio: UploadFile = File(...)):
             "reply": str(analysis),
         }
 
-    original_sentence = text
+    original_sentence = analysis.get("original_sentence", "")
     corrected_sentence = analysis.get("corrected_sentence", "")
     explanation = analysis.get("explanation", "")
     reply = analysis.get("reply", "")
