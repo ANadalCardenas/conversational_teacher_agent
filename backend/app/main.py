@@ -27,8 +27,8 @@ class SummaryRequest(BaseModel):
 
 
 class SummaryResponse(BaseModel):
-    main_mistakes: list[str]
-    activities: list[str]
+    main_mistakes: str
+    activities: str
 
 
 # --- Global STT instance (model loaded once at startup) ---
@@ -104,7 +104,7 @@ async def summary(_: SummaryRequest):
     
     summary = client.get_summary(summary_mistakes)
 
-    mistakes = summary.get("summary", [])
+    mistakes = summary.get("summary", "")
     activities = summary.get("summary", "")
 
     return SummaryResponse(
