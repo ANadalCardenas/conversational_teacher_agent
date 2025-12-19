@@ -116,9 +116,9 @@ async function sendAudioToBackend(audioBlob) {
     const data = await response.json();
 
     // Update Step 2 content
-    originalSentenceP.textContent = data.original_sentence;
-    correctedSentenceP.textContent = data.corrected_sentence;
-    explanationTextP.textContent = data.explanation;
+    originalSentenceP.innerHTML = data.original_sentence;
+    correctedSentenceP.innerHTML = data.corrected_sentence;
+    explanationTextP.innerHTML = data.explanation;
 
     // Update follow-up message for future Step 1 visits
     currentFollowUpMessage = data.reply;
@@ -152,20 +152,10 @@ async function requestSummary() {
     const data = await response.json();
 
     // Populate lists
-    summaryMistakesUl.innerHTML = "";
-    summaryActivitiesUl.innerHTML = "";
-
-    (data.main_mistakes || []).forEach((m) => {
-      const li = document.createElement("li");
-      li.textContent = m;
-      summaryMistakesUl.appendChild(li);
-    });
-
-    (data.activities || []).forEach((a) => {
-      const li = document.createElement("li");
-      li.textContent = a;
-      summaryActivitiesUl.appendChild(li);
-    });
+    summaryMistakesUl.innerHTML = data.main_mistakes;
+    summaryActivitiesUl.innerHTML = data.activities;
+    
+    
 
     showStep("step3");
     setStatus("Summary loaded.");
