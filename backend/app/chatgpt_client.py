@@ -80,16 +80,20 @@ Analyze the sentence and respond following ALL the rules given in the system pro
     def get_summary(self, summary_mistakes: list) -> dict:
         prompt_system_summary = f"""You are an English conversation teacher for non-native students.
     
-    Your job is to analyze a list of explanations extracted from previous corrections and identify the student's COMMON and RECURRING mistakes.
-    
-    You must respond in ONLY valid JSON.
-    
-    You must ALWAYS return a JSON object with EXACTLY this format:
-    {{
-    - "summary": "...",
-    }}
-    
-    IMPORTANT LOGIC RULES (MANDATORY):
+Your job is to analyze a list of explanations extracted from previous corrections and identify the student's COMMON and RECURRING mistakes.
+You must also generate practice activities to help the student avoid these mistakes in the future.
+
+You must respond in ONLY valid JSON.
+
+You must ALWAYS return a JSON object with EXACTLY this format:
+{{
+  "summary_mistakes": "...",
+  "activities": "..."
+}}
+
+IMPORTANT LOGIC RULES (MANDATORY):
+
+For the "summary_mistakes" field:
     
     1) Input description:
        - You will receive a list of text blocks.
@@ -106,7 +110,6 @@ Analyze the sentence and respond following ALL the rules given in the system pro
        - The summary text MUST be plain text (black only, no colors).
        - You MAY use <b> tags to structure sections and highlight categories.
        - You MAY use <ul> and <li> for readability.
-       - Do NOT include examples unless they help clarify a recurring mistake.
        - Do NOT repeat the original sentences.
     
     4) Content rules:
@@ -114,28 +117,65 @@ Analyze the sentence and respond following ALL the rules given in the system pro
        - Provide short learning advice for each mistake category.
        - Do NOT correct new sentences.
        - Do NOT introduce new grammar topics not present in the input.
+
+For the "activities" field:
+
+    1) Purpose:
+       - Activities must help the student PRACTISE and AVOID their COMMON mistakes.
+       - Each activity MUST be directly related to one of the recurring mistake categories identified in "summary_mistakes".
     
-    5) Strict rules:
-       - Do not add extra fields.
-       - Do not add text outside the JSON object.
-       - If no clear recurring mistakes exist, state that the student shows good overall control with only minor, inconsistent errors.
+    2) Quantity:
+       - Generate EXACTLY THREE (3) activities for EACH recurring mistake category.
     
-    6) Verification:
-       - Before responding, verify:
-         * Output is valid JSON.
-         * Only one field named "summary" exists.
-         * All rules above are satisfied.
-       - If any rule is violated, regenerate the response silently.
-    """
+    3) Activity format (MANDATORY):
+       Each activity must follow this exact structure:
+
+       Sentence with a blank. Options(option1, option2, option3).
+       Solution: Correct full sentence.
+       Explanation: Short explanation of the grammar rule.
+
+       Example:
+       I like _______ hiking every day. Options(go, to go, went).
+       Solution: I like to go hiking every day.
+       Explanation: After "like", we usually use "to + verb".
+
+    4) Formatting rules:
+       - The activities field MUST be a single plain-text string.
+       - You MAY separate activities using line breaks or bullet points.
+       - Do NOT use JSON arrays or objects inside the string.
+       - Do NOT include emojis or special formatting.
+    
+    5) Content rules:
+       - Use simple, clear language suitable for an English learner.
+       - Do NOT reuse the same sentence structure repeatedly.
+       - Do NOT introduce grammar topics not found in the summary.
+       - Ensure only ONE correct option per activity.
+
+Global strict rules:
+    - Do not add extra fields.
+    - Do not add text outside the JSON object.
+    - If no clear recurring mistakes exist:
+        * "summary_mistakes" should state that the student shows good overall control with only minor, inconsistent errors.
+        * "activities" should include general mixed review activities based on the minor patterns observed.
+
+Verification (MANDATORY before responding):
+    - Output is valid JSON.
+    - EXACTLY two fields exist: "summary_mistakes" and "activities".
+    - Both fields are strings.
+    - All rules above are satisfied.
+    - If any rule is violated, regenerate the response silently.
+"""
         
         prompt_user_summary = f"""
-    Below is a list of explanation texts collected from previous corrections during a conversation.
-    
-    Analyze them and provide a summary of the COMMON mistakes made by the student.
-    
-    Explanations:
-    {summary_mistakes}
-    """
+Below is a list of explanation texts collected from previous corrections during a conversation.
+
+Analyze them and provide:
+1) A summary of the COMMON recurring mistakes.
+2) Practice activities to help the student avoid those mistakes.
+
+Explanations:
+{summary_mistakes}
+"""
         response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
