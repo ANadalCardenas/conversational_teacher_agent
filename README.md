@@ -62,6 +62,8 @@ The repository includes screenshots showing:
 ### Prerequisites
 - Docker
 - Docker Compose
+- OpenAI API key. Create it, then copy it into the .env file located in the project folder.
+  OPENAI_API_KEY = ... (private key).
 
 ### Run the application
 
