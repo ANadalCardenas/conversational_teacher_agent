@@ -91,8 +91,7 @@ async def voice_turn(audio: UploadFile = File(...)):
         "original_sentence": original_sentence,
         "corrected_sentence": corrected_sentence,
         "explanation": explanation,
-        "reply": reply,
-        "error_prompt": error_prompt,
+        "reply": reply
     }
 
 
@@ -107,8 +106,8 @@ async def summary(_: SummaryRequest):
     
     summary = client.get_summary(summary_mistakes)
 
-    mistakes = summary.get("summary", "")
-    activities = summary.get("summary", "")
+    mistakes = summary.get("summary_mistakes", "")
+    activities = summary.get("activities", "")
 
     return SummaryResponse(
         main_mistakes=mistakes,

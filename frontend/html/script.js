@@ -18,8 +18,8 @@ const continueBtn = document.getElementById("continue-btn");
 const finishBtn = document.getElementById("finish-btn");
 
 // Step 3
-const summaryMistakesUl = document.getElementById("summary-mistakes");
-const summaryActivitiesUl = document.getElementById("summary-activities");
+const summaryMistakesP = document.getElementById("summary-mistakes");
+const summaryActivitiesP = document.getElementById("summary-activities");
 const newSessionBtn = document.getElementById("new-session-btn");
 
 // --- State ---
@@ -152,10 +152,8 @@ async function requestSummary() {
     const data = await response.json();
 
     // Populate lists
-    summaryMistakesUl.innerHTML = data.main_mistakes;
-    summaryActivitiesUl.innerHTML = data.activities;
-    
-    
+    summaryMistakesP.innerHTML = data.main_mistakes;
+    summaryActivitiesP.innerHTML = data.activities;
 
     showStep("step3");
     setStatus("Summary loaded.");

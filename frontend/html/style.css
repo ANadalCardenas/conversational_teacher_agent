@@ -125,3 +125,8 @@ body {
 .summary-section li {
   margin-bottom: 6px;
 }
+
+.summary-section p {
+  white-space: pre-line;
+  line-height: 1.6;
+}

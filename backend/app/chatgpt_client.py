@@ -115,7 +115,8 @@ For the "summary_mistakes" field:
     3) Formatting rules:
        - The summary text MUST be plain text (black only, no colors).
        - You MAY use <b> tags to structure sections and highlight categories.
-       - You MAY use <ul> and <li> for readability.
+       - You CANNOT use any other HTML tags.
+       - You MAY use \n (new line) for readability.
        - Do NOT repeat the original sentences.
     
     4) Content rules:
