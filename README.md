@@ -21,15 +21,28 @@ An interactive **English Conversational Teacher** web application that helps use
 ## Application Screenshots
 
 The repository includes screenshots showing:
-- Live conversational questions/responses 
+
+- Live conversational questions/responses  
+<p align="center">
+  <img width="653" height="303" alt="Screenshot from 2026-01-04 13-27-20" src="https://github.com/user-attachments/assets/26a4e72c-e159-4a56-bf63-0edaea0081a2" />
+</p>
+
 - Sentence feedback with corrections and explanations  
-- Final session summaries with learning recommendations
-<img width="870" height="405" alt="Screenshot from 2026-01-04 13-27-20" src="https://github.com/user-attachments/assets/26a4e72c-e159-4a56-bf63-0edaea0081a2" />
-<img width="865" height="906" alt="Screenshot from 2026-01-04 13-27-04" src="https://github.com/user-attachments/assets/170aa296-c1c6-4706-982a-9eef92d37a1e" />
-<img width="844" height="785" alt="Screenshot from 2026-01-04 17-07-50" src="https://github.com/user-attachments/assets/04462fc1-d9d6-486a-ba3b-bab39c74c2a2" />
-<img width="850" height="824" alt="Screenshot from 2026-01-04 17-15-39" src="https://github.com/user-attachments/assets/c56cd1a1-7644-4b03-8acb-e55e6f8b4f52" />
+<p align="center">
+  <img width="648" height="680" alt="Screenshot from 2026-01-04 13-27-04" src="https://github.com/user-attachments/assets/170aa296-c1c6-4706-982a-9eef92d37a1e" />
+</p>
+
+- Final session summaries with learning recommendations  
+<p align="center">
+  <img width="633" height="738" alt="Screenshot from 2026-01-04 17-07-50" src="https://github.com/user-attachments/assets/04462fc1-d9d6-486a-ba3b-bab39c74c2a2" />
+</p>
+
+<p align="center">
+  <img width="638" height="618" alt="Screenshot from 2026-01-04 17-15-39" src="https://github.com/user-attachments/assets/c56cd1a1-7644-4b03-8acb-e55e6f8b4f52" />
+</p>
 
 ---
+
 
 ## Project Structure
 
