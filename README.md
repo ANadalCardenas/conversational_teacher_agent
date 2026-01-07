@@ -1,12 +1,14 @@
 # English Conversational Teacher
 
-An interactive **English Conversational Teacher** web application that helps users practice English through conversation, receive instant corrections, detailed explanations, and a final learning summary. The project combines a lightweight frontend with a Python backend powered by AI, and supports **text and voice-based interaction**.
+An interactive **English Conversational Teacher** web application that helps users practice English through conversation, receive instant corrections, detailed explanations, and a final learning summary. The project combines a lightweight frontend with a Python backend powered by AI supports **voice-based interaction**.
+
 
 ---
 
 ## Features
 
-- Conversational English practice (text + speech)
+- Conversational English practice (voice-based interaction)
+- Transcription to text with speech recognition model (Wishper, https://openai.com/index/whisper/)
 - Instant sentence correction with highlighted improvements
 - Clear explanations of grammar, vocabulary, and usage mistakes
 - Context-aware follow-up questions
@@ -55,6 +57,50 @@ The repository includes screenshots showing:
 └── README.md
 ```
 
+
+```mermaid
+flowchart TD
+  U((User))
+
+  subgraph FE[Frontend - Browser]
+    MIC[Hold microphone button]
+    UI1[Show corrections or summary]
+    SUMBTN[Request session summary]
+  end
+
+  subgraph BE[Backend API]
+    API_ASR[POST transcribe audio]
+    API_TXT[POST chat message]
+    API_SUM[POST summary request]
+    CTX[(Conversation context)]
+  end
+
+  subgraph ASR[Speech to Text]
+    WHISPER[Whisper model]
+  end
+
+  subgraph LLM[AI Teacher Agent - OpenAI]
+    CORR[Correct user sentence]
+    EXPL[Explain mistakes]
+    FOLLOW[Generate follow up question]
+    SUM[Generate learning summary]
+  end
+
+  %% Voice input path
+  U --> MIC --> API_ASR
+  API_ASR --> WHISPER --> API_TXT
+
+  %% Teacher response
+  API_TXT --> CTX
+  CTX --> CORR --> EXPL --> FOLLOW --> UI1
+  UI1 --> U
+  FOLLOW --> CTX
+
+  %% Summary flow
+  U --> SUMBTN --> API_SUM
+  API_SUM --> CTX --> SUM --> UI1
+```
+
 ---
 
 ## Getting Started
@@ -81,22 +127,14 @@ http://localhost:8080
 
 ## How It Works
 
-1. User writes or speaks an English sentence.
-2. Backend processes the input using AI.
-3. The user receives:
+1. User speaks an English sentence.
+2. With a speech recognition model, the application transcribes into text what the user said.
+3. Backend processes the input using AI.
+4. The user receives:
    - A corrected sentence
    - An explanation of mistakes
    - A conversational reply
-4. At the end, a session summary highlights common errors and exercises.
-
----
-
-## Target Users
-
-- English learners
-- Professionals preparing for English-speaking roles
-- Remote workers
-- Users who want detailed feedback, not just corrections
+5. At the end, a session summary highlights common errors and exercises.
 
 ---
 
