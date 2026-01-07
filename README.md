@@ -1,6 +1,6 @@
 # English Conversational Teacher
 
-An interactive **English Conversational Teacher** web application that helps users practice English through conversation, receive instant corrections, detailed explanations, and a final learning summary. The project combines a lightweight frontend with a Python backend powered by AI supports **voice-based interaction**.
+An interactive **English Conversational Teacher** web application that helps users practice English through conversation, receive instant corrections, detailed explanations, and a final learning summary. The project pairs a lightweight interface with an AI-driven Python backend to deliver seamless **voice interaction** powered by **automatic speech recognition**.
 
 
 ---
