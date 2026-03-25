@@ -28,6 +28,20 @@ services:
     networks:
       - teacher-net
 
+  tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: teacher-tests
+    command: ["pytest", "tests/", "-v", "--no-header"]
+    environment:
+      - OPENAI_API_KEY=test-key
+    volumes:
+      - ./backend/tests:/app/tests
+    networks:
+      - teacher-net
+    restart: "no"
+
 networks:
   teacher-net:
     driver: bridge

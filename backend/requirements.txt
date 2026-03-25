@@ -7,3 +7,7 @@ torch
 torchaudio
 numpy
 openai>=1.0.0
+
+# Testing
+pytest==8.3.5
+httpx==0.27.2
