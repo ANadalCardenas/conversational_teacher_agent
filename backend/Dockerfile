@@ -10,10 +10,12 @@ WORKDIR /app
 
 # Python deps
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir --upgrade pip
 
-RUN pip install --no-cache-dir --no-build-isolation openai-whisper==20240930 && \
-    pip install --no-cache-dir -r requirements.txt
+# Force pip to own setuptools/wheel fully (overrides conda's partial install)
+# so pkg_resources is reachable in build subprocesses
+RUN pip install --no-cache-dir --ignore-installed setuptools wheel && \
+    pip install --no-cache-dir --no-build-isolation -r requirements.txt
 
 # App code
 COPY app ./app
