@@ -19,6 +19,7 @@ RUN pip install --no-cache-dir --ignore-installed setuptools wheel && \
 
 # App code
 COPY app ./app
+COPY tests ./tests
 
 EXPOSE 8000
 

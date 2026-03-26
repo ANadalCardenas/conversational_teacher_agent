@@ -1,8 +1,6 @@
 name: Run Tests
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -13,18 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        working-directory: backend
-        run: |
-          pip install fastapi uvicorn python-multipart openai httpx pytest numpy
+      - name: Build test image
+        run: docker build -t conversational_teacher_agent-tests ./backend
 
       - name: Run tests
-        working-directory: backend
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: pytest tests/ -v --no-header
+        run: |
+          docker run --rm \
+            -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+            conversational_teacher_agent-tests \
+            python3 -m pytest tests/ -v --no-header
