@@ -138,6 +138,37 @@ http://localhost:8080
 
 ---
 
+## Running the Tests
+
+### Inside Docker (recommended)
+
+Build the test image and run the suite in one command:
+
+```bash
+docker build -t conversational_teacher_agent-tests ./backend
+docker run --rm conversational_teacher_agent-tests python3 -m pytest tests/ -v --no-header
+```
+
+To get an interactive shell inside the container first:
+
+```bash
+docker run --rm -it -v $(pwd)/backend/tests:/app/tests conversational_teacher_agent-tests bash
+# then inside the container:
+python3 -m pytest tests/ -v --no-header
+```
+
+### Via Docker Compose
+
+```bash
+docker compose run --rm tests
+```
+
+### CI (GitHub Actions)
+
+Tests run automatically on every pull request targeting `main`. The workflow builds the Docker image and executes the full test suite. No extra setup is needed beyond the `OPENAI_API_KEY` secret configured in the repository settings.
+
+---
+
 ## How It Works
 
 1. User speaks an English sentence.
